@@ -1,5 +1,4 @@
-This is umbrella project for command-line calculator.
-
+This is umbrella project for command-line calculator.  
 I will use it for studying different computer languages.
 
 # Input Specification
@@ -23,6 +22,7 @@ I will use it for studying different computer languages.
 - ; semi-colon
 
 **Identifier**: [_a-zA-Z][_a-zA-Z0-9]\*
+
 **Number**: [0-9][.0-9]\*
 
 **Functions**
