@@ -11,8 +11,8 @@ Calculator should read input (and execute expressions) in the interactive mode o
 ## Input Specification
 
 **Constants**
-- Pi 3.141592653589793
-- E 2.718281828459045
+- Pi = 3.141592653589793
+- E = 2.718281828459045
 
 **Operators**
 - ' - derivative
@@ -24,9 +24,9 @@ Calculator should read input (and execute expressions) in the interactive mode o
 - = - assignment
 
 **Symbols**
-- ( left parenthesis
-- ) right parenthesis
-- ; semi-colon
+- ( - left parenthesis
+- ) - right parenthesis
+- ; - semi-colon
 
 **Identifier**: [_a-zA-Z][_a-zA-Z0-9]\*
 
@@ -46,6 +46,10 @@ Calculator should read input (and execute expressions) in the interactive mode o
 - cosh - hyperbolic cosine
 - sinh - hyperbolic sine
 - tanh - hyperbolic tangent
+
+**Commands**
+- quit - stop and exit
+- exit - stop and exit
 
 # Tasks
 
