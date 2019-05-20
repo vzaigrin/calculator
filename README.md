@@ -8,7 +8,7 @@ Calculator should read input (and execute expressions) in the interactive mode o
 - -e expression - execute expression and exit
 - -f file - read and execute expressions from the file and exit or proceed to interactive mode if *-i* option is provided
 
-# Input Specification
+## Input Specification
 
 **Constants**
 - Pi 3.141592653589793
@@ -46,3 +46,17 @@ Calculator should read input (and execute expressions) in the interactive mode o
 - cosh - hyperbolic cosine
 - sinh - hyperbolic sine
 - tanh - hyperbolic tangent
+
+# Tasks
+
+To achieve its goals, the calculator should provide the following steps:
+- Lexical analysis - convert input expression into list of tokens
+- Syntax analysis - transform a list of tokens (from the Lexical analyzer) into a Syntax tree, based on a grammar
+- Code generation - translate the output of the Syntax analyzer into lower level code (stack machine)
+
+
+## Lexical Analyzer
+
+For lexical analysis I will use **Finite-state machine** with two states:
+- ready - ready for a new token, no symbols in cache
+- process - in the process of identifying token (has symbols in cache)
