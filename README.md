@@ -1,6 +1,13 @@
 This is umbrella project for command-line calculator.  
 I will use it for studying different computer languages.
 
+Calculator should read input (and execute expressions) in the interactive mode or from the file.
+
+**Command line arguments**:
+- -i - interactive mode (default) - read and execute expressions until EOF or command 'quit' or 'exit'
+- -e expression - execute expression and exit
+- -f file - read and execute expressions from the file and exit or proceed to interactive mode if *-i* option is provided
+
 # Input Specification
 
 **Constants**
@@ -39,5 +46,3 @@ I will use it for studying different computer languages.
 - cosh - hyperbolic cosine
 - sinh - hyperbolic sine
 - tanh - hyperbolic tangent
-
-Calculator should read input interactively or from file.
