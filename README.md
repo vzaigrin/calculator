@@ -53,7 +53,7 @@ Calculator should read input (and execute expressions) in the interactive mode o
 
 # Tasks
 
-To achieve its goals, the calculator should provide the following steps:
+To achieve its goals, Calculator should provide the following steps:
 - Lexical analysis - convert input expression into list of tokens
 - Syntax analysis - transform a list of tokens (from the Lexical analyzer) into a Syntax tree, based on a grammar
 - Code generation - translate the output of the Syntax analyzer into lower level code (stack machine)
