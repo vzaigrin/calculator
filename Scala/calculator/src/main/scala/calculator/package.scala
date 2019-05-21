@@ -2,99 +2,114 @@ import scala.util.matching.Regex
 
 package object calculator {
 
-  def lex(input: String): List[(String, String)] = {
+  // Token types
+  object Token extends  Enumeration {
+    val Constant, Operator, Symbol, Identifier, Number, Function, Unknown, End = Value
+  }
+
+  // Types of char in the input
+  object Symbol extends Enumeration {
+    val Space, End, SimpleToken, ComplexToken, Unknown = Value
+  }
+
+  // States od Finite-state Machine
+  object State extends Enumeration {
+    val Ready, Proceed = Value
+  }
+
+  def lex(input: String): List[(Token.Value, String)] = {
     // One-symbol tokens
-    val simple: Map[Char, (String, String)] = Map (
-      '\'' -> ("op", "derivative"),
-      '^' -> ("op", "power"),
-      '*' -> ("op", "multiply"),
-      '/' -> ("op", "divide"),
-      '+' -> ("op", "plus"),
-      '-' -> ("op", "minus"),
-      '=' -> ("op", "assign"),
-      '(' -> ("sym", "left_par"),
-      ')' -> ("sym", "right_par"),
-      ';' -> ("sym", "semi-colon")
+    val simple: Map[Char, (Token.Value, String)] = Map (
+      '\'' -> (Token.Operator, "derivative"),
+      '^' -> (Token.Operator, "power"),
+      '*' -> (Token.Operator, "multiply"),
+      '/' -> (Token.Operator, "divide"),
+      '+' -> (Token.Operator, "plus"),
+      '-' -> (Token.Operator, "minus"),
+      '=' -> (Token.Operator, "assign"),
+      '(' -> (Token.Symbol, "left_par"),
+      ')' -> (Token.Symbol, "right_par"),
+      ';' -> (Token.Symbol, "semi-colon")
     )
 
+    // Known tokens: constants and function
+    val constants: List[String] = List ("Pi", "E")
+    val functions: List[String] = List ("exp", "log", "log10", "pow", "acos", "asin", "atan", "cos", "sin", "tan", "cosh", "sinh", "tanh")
+
     // Check char to be in known arrays
-    def checkChar(c: Char): String = {
+    def checkChar(c: Char): Symbol.Value = {
       // Chars for separate, start and continue tokens
       val space: Array[Char] = Array (' ', '\t')
       val end: Array[Char] = Array ('\n', '\r')
       val simpleToken: Array[Char] = simple.keys.toArray
       val complexToken: Array[Char] = ('a' to 'z').toArray ++ ('A' to 'Z') ++ ('0' to '9') ++ Array('_', '.')
 
-      if (space.contains(c)) "space"
-      else if (end.contains(c)) "end"
-      else if (simpleToken.contains(c)) "simpleToken"
-      else if (complexToken.contains(c)) "complexToken"
-      else "unknown"
+      if (space.contains(c)) Symbol.Space
+      else if (end.contains(c)) Symbol.End
+      else if (simpleToken.contains(c)) Symbol.SimpleToken
+      else if (complexToken.contains(c)) Symbol.ComplexToken
+      else Symbol.Unknown
     }
 
     // Check string for token
-    def checkString(s: String): String = {
-      // Variable and Numbers
-      val variable: Regex = "[_a-zA-Z][_a-zA-Z0-9]*".r
+    def checkString(s: String): Token.Value = {
+      // Identifiers and Numbers
+      val identifier: Regex = "[_a-zA-Z][_a-zA-Z0-9]*".r
       val number: Regex = """\d+|\d+\.\d*|\.\d+""".r
 
-      // Known tokens: constants and function
-      val constants: List[String] = List ("Pi", "E")
-      val functions: List[String] = List ("exp", "log", "log10", "pow", "acos", "asin", "atan", "cos", "sin", "tan", "cosh", "sinh", "tanh")
-
       s match {
-        case variable(_*) =>
-          if (constants.contains(s)) "constant"
-          else if (functions.contains(s)) "function"
-          else "variable"
-        case number(_*) => "number"
-        case _ => "unknown"
+        case identifier(_*) =>
+          if (constants.contains(s)) Token.Constant
+          else if (functions.contains(s)) Token.Function
+          else Token.Identifier
+        case number(_*) => Token.Number
+        case _ => Token.Unknown
       }
     }
 
     // Proceed chars from the input string one by one
     // Initialize State, Buffer and Result
-    var state = "Ready" // current state of Finite-state Machine
+    var state: State.Value = State.Ready // current state of Finite-state Machine
     var buffer: Array[Char] = Array() // buffer for "long" token
-    var result: List[(String, String)] = List() // list with parsed tokens
+    var result: List[(Token.Value, String)] = List() // list with parsed tokens
 
     // Proceed chars from the input string one by one
     input.toArray.foreach { c =>
       state match {
-        case "Ready" => checkChar(c) match {
-          case "end" => result = result ++ List(("end", ""))
-          case "simpleToken" => result = result ++ List(simple(c))
-          case "complexToken" => state = "Proceed"
+        case State.Ready => checkChar(c) match {
+          case Symbol.Space =>
+          case Symbol.End => result = result ++ List((Token.End, ""))
+          case Symbol.SimpleToken => result = result ++ List(simple(c))
+          case Symbol.ComplexToken => state = State.Proceed
             buffer = Array(c)
-          case "unknown" => result = result ++ List(("unknown", c.toString))
-          case _ =>
+          case Symbol.Unknown => result = result ++ List((Token.Unknown, c.toString))
         }
-        case "Proceed" => checkChar(c) match {
-          case "space" => state = "Ready"
+        case State.Proceed => checkChar(c) match {
+          case Symbol.Space => state = State.Ready
             val s = buffer.mkString ("")
             buffer = Array()
             result = result ++ List((checkString(s), s))
-          case "end" => state = "Ready"
+          case Symbol.End => state = State.Ready
             val s = buffer.mkString("")
             buffer = Array()
-            result = result ++ List((checkString(s), s), ("end", ""))
-          case "simpleToken" => state = "Ready"
+            result = result ++ List((checkString(s), s), (Token.End, ""))
+          case Symbol.SimpleToken => state = State.Ready
             val s = buffer.mkString("")
             buffer = Array()
             result = result ++ List((checkString(s), s), simple(c))
-          case "complexToken" => buffer = buffer ++ Array(c)
-          case "unknown" => state = "Ready"
+          case Symbol.ComplexToken => buffer = buffer ++ Array(c)
+          case Symbol.Unknown => state = State.Ready
             val s = buffer.mkString("")
             buffer = Array()
-            result = result ++ List((checkString(s), s), ("unknown", c.toString))
+            result = result ++ List((checkString(s), s), (Token.Unknown, c.toString))
         }
       }
     }
     // Return list of tokens
-    if (state == "Ready") result ++ List (("end", "") )
+    if (state == State.Ready) result ++ List((Token.End, "") )
     else {
       val s = buffer.mkString("")
-      result ++ List((checkString(s), s), ("end", ""))
+      result ++ List((checkString(s), s), (Token.End, ""))
     }
   }
 
