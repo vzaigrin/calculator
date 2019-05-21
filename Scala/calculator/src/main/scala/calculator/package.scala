@@ -36,8 +36,7 @@ package object calculator {
     def checkString(s: String): String = {
       // Variable and Numbers
       val variable: Regex = "[_a-zA-Z][_a-zA-Z0-9]*".r
-      val number: Regex = "[0-9]+".r
-      val numberDot: Regex = "([0-9]*)\\.([0-9]*)".r
+      val number: Regex = """\d+|\d+\.\d*|\.\d+""".r
 
       // Known tokens: constants and function
       val constants: List[String] = List ("Pi", "E")
@@ -49,7 +48,6 @@ package object calculator {
           else if (functions.contains(s)) "function"
           else "variable"
         case number(_*) => "number"
-        case numberDot(_*) => "number"
         case _ => "unknown"
       }
     }
