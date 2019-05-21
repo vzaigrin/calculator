@@ -1,27 +1,103 @@
+import calculator.State.{Proceed, Ready}
 import scala.util.matching.Regex
-val variable: Regex = "[_a-zA-Z][_a-zA-Z0-9]*".r
-val number: Regex = "[0-9]*".r
-val numberDot: Regex = "([0-9]*)\\.([0-9]*)".r
 
-"t" match {
-  case variable(_*) => println("match variable")
-  case number(_*) => println("match number")
-  case numberDot(_*) => println("match number with dot")
-  case _ => println("not match")
+// One-symbol tokens
+val simple: Map[Char, (String, String)] = Map (
+  '\'' -> ("op", "derivative"),
+  '^' -> ("op", "power"),
+  '*' -> ("op", "multiply"),
+  '/' -> ("op", "divide"),
+  '+' -> ("op", "plus"),
+  '-' -> ("op", "minus"),
+  '=' -> ("op", "assign"),
+  '(' -> ("sym", "left_par"),
+  ')' -> ("sym", "right_par"),
+  ';' -> ("sym", "semi-colon")
+)
+
+// Check char to be in known arrays
+def checkChar(c: Char): String = {
+  // Chars for separate, start and continue tokens
+  val space: Array[Char] = Array (' ', '\t')
+  val end: Array[Char] = Array ('\n', '\r')
+  val simpleToken: Array[Char] = simple.keys.toArray
+  val complexToken: Array[Char] = ('a' to 'z').toArray ++ ('A' to 'Z') ++ ('0' to '9') ++ Array('_', '.')
+
+  if (space.contains(c)) "space"
+  else if (end.contains(c)) "end"
+  else if (simpleToken.contains(c)) "simpleToken"
+  else if (complexToken.contains(c)) "complexToken"
+  else "unknown"
 }
 
-var result: List[String] = List()
+// Check string for token
+def checkString(s: String): String = {
+  // Variable and Numbers
+  val variable: Regex = "[_a-zA-Z][_a-zA-Z0-9]*".r
+  val number: Regex = "[0-9]+".r
+  val numberDot: Regex = "([0-9]*)\\.([0-9]*)".r
 
-result = result ++ List("1")
-result = result ++ List("2")
-result = List()
+  // Known tokens: constants and function
+  val constants: List[String] = List ("Pi", "E")
+  val functions: List[String] = List ("exp", "log", "log10", "pow", "acos", "asin", "atan", "cos", "sin", "tan", "cosh", "sinh", "tanh")
 
-"String\tone more".toArray
+  s match {
+    case variable(_*) =>
+      if (constants.contains(s)) "constant"
+      else if (functions.contains(s)) "function"
+      else "variable"
+    case number(_*) => "number"
+    case numberDot(_*) => "number"
+    case _ => "unknown"
+  }
+}
 
-val operators: Array[Char] = Array('\'', '^', '*', '/', '+', '-', '=', '(', ')', ';')
-val symbols: Array[Char] = Array('(', ')', ';')
-val space: Array[Char] = Array(' ', '\t', '\n', '\r')
-val simpleToken: Array[Char] = operators ++ symbols
-val startToken: Array[Char] = ('a' to 'z').toArray ++ ('A' to 'Z') ++ Array('_')
-val continueToken: Array[Char] = startToken ++ ('0' to '9') ++ Array('.')
+// Parse input string to List of tokens
+def parse(input: String): List[(String, String)] = {
+  // Initialize State, Buffer and Result
+  var state = Ready // current state of Finite-state Machine
+  var buffer: Array[Char] = Array() // buffer for "long" token
+  var result: List[(String, String)] = List() // list with parsed tokens
 
+  // Proceed chars from the input string one by one
+  input.toArray.foreach { c =>
+    state match {
+      case Ready => checkChar(c) match {
+        case "end" => result = result ++ List(("end", ""))
+        case "simpleToken" => result = result ++ List(simple(c))
+        case "complexToken" => state = Proceed
+          buffer = Array(c)
+        case "unknown" => result = result ++ List(("unknown", c.toString))
+        case _ =>
+      }
+      case Proceed => checkChar(c) match {
+        case "space" => state = Ready
+          val s = buffer.mkString ("")
+          buffer = Array()
+          result = result ++ List((checkString(s), s))
+        case "end" => state = Ready
+          val s = buffer.mkString("")
+          buffer = Array()
+          result = result ++ List((checkString(s), s), ("end", ""))
+        case "simpleToken" => state = Ready
+          val s = buffer.mkString("")
+          buffer = Array()
+          result = result ++ List((checkString(s), s), simple(c))
+        case "complexToken" => buffer = buffer ++ Array(c)
+        case "unknown" => state = Ready
+          val s = buffer.mkString("")
+          buffer = Array()
+          result = result ++ List((checkString(s), s), ("unknown", c.toString))
+      }
+    }
+  }
+  // Return list of tokens
+  if (state == Ready) result ++ List (("end", "") )
+  else {
+    val s = buffer.mkString("")
+    result ++ List((checkString(s), s), ("end", ""))
+  }
+}
+
+val r = parse("y = 2*x+Pi^4 + z + 2")
+r.foreach(tv => println(tv._1, tv._2))
