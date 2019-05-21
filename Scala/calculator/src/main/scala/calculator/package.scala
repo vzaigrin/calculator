@@ -17,7 +17,7 @@ package object calculator {
     val Ready, Proceed = Value
   }
 
-  def lex(input: String): List[(Token.Value, String)] = {
+  def lexer(input: String): List[(Token.Value, String)] = {
     // One-symbol tokens
     val simple: Map[Char, (Token.Value, String)] = Map (
       '\'' -> (Token.Operator, "derivative"),
