@@ -4,7 +4,7 @@ package object calculator {
 
   // Token types
   object Token extends  Enumeration {
-    val Constant, Operator, Symbol, Identifier, Number, Function, Unknown, End = Value
+    val Constant, Operator, Symbol, Identifier, Number, Function, Command, Unknown, End = Value
   }
 
   // Types of char in the input
@@ -27,14 +27,15 @@ package object calculator {
       '+' -> (Token.Operator, "plus"),
       '-' -> (Token.Operator, "minus"),
       '=' -> (Token.Operator, "assign"),
-      '(' -> (Token.Symbol, "left_par"),
-      ')' -> (Token.Symbol, "right_par"),
+      '(' -> (Token.Symbol, "left_parenthesis"),
+      ')' -> (Token.Symbol, "right_parenthesis"),
       ';' -> (Token.Symbol, "semi-colon")
     )
 
     // Known tokens: constants and function
     val constants: List[String] = List ("Pi", "E")
     val functions: List[String] = List ("exp", "log", "log10", "pow", "acos", "asin", "atan", "cos", "sin", "tan", "cosh", "sinh", "tanh")
+    val commands: List[String] = List("quit", "exit")
 
     // Check char to be in known arrays
     def checkChar(c: Char): Symbol.Value = {
@@ -61,6 +62,7 @@ package object calculator {
         case identifier(_*) =>
           if (constants.contains(s)) Token.Constant
           else if (functions.contains(s)) Token.Function
+          else if (commands.contains(s)) Token.Command
           else Token.Identifier
         case number(_*) => Token.Number
         case _ => Token.Unknown
