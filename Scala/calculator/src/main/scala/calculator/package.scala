@@ -7,12 +7,12 @@ package object calculator {
     val Constant, Operator, Symbol, Identifier, Number, Function, Command, Unknown, End = Value
   }
 
-  // Types of char in the input
+  // Types of chars in the input
   object Symbol extends Enumeration {
     val Space, End, SimpleToken, ComplexToken, Unknown = Value
   }
 
-  // States od Finite-state Machine
+  // States of Finite-state Machine
   object State extends Enumeration {
     val Ready, Proceed = Value
   }
@@ -32,12 +32,12 @@ package object calculator {
       ';' -> (Token.Symbol, "semi-colon")
     )
 
-    // Known tokens: constants and function
+    // Known tokens: constants, function and commands
     val constants: List[String] = List ("Pi", "E")
     val functions: List[String] = List ("exp", "log", "log10", "pow", "acos", "asin", "atan", "cos", "sin", "tan", "cosh", "sinh", "tanh")
     val commands: List[String] = List("quit", "exit")
 
-    // Check char to be in known arrays
+    // Check char for type
     def checkChar(c: Char): Symbol.Value = {
       // Chars for separate, start and continue tokens
       val space: Array[Char] = Array (' ', '\t')
