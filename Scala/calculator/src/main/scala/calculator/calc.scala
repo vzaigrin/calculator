@@ -30,7 +30,7 @@ object calc extends App {
     if (options("-v")) println("Proceed expressions")
     expressionsList.foreach { s =>
       if (options("-v")) println(s)
-      lexer(s).foreach(t => println(t.tt, t.value))
+      Lexer().parse(s).foreach(t => println(t.tt, t.value))
     }
   }
 
@@ -41,7 +41,7 @@ object calc extends App {
       //noinspection SourceNotClosed
       Source.fromFile(expressionsFile).getLines.foreach { s =>
         if (options("-v")) println(s)
-        lexer(s).foreach(t => println(t.tt, t.value))
+        Lexer().parse(s).foreach(t => println(t.tt, t.value))
       }
     } catch {
       case e: FileNotFoundException => println(e.getLocalizedMessage)
@@ -55,7 +55,7 @@ object calc extends App {
       val input: String = StdIn.readLine
       if (input != null) {
         println(input)
-        val tokens: List[Token] = lexer(input)
+        val tokens: List[Token] = Lexer().parse(input)
         tokens.foreach(t => println(t.tt, t.value))
         if (tokens.contains(Token(TokenType.Command, "quit")) ||
           tokens.contains(Token(TokenType.Command, "exit"))) sys.exit(0)
