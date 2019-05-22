@@ -1,8 +1,10 @@
 package calculator
 
 import scala.io._
+import java.io.FileNotFoundException
 
 object calc extends App {
+  // Types, values and methods for parsing arguments
   type Options = Map[String, Boolean]
   var expressionsList: List[String] = List()
   var expressionsFile: String = ""
@@ -20,8 +22,10 @@ object calc extends App {
     }
   }
 
+  // Parse arguments
   val options: Options = parseOptions(Map("-v" -> false, "-i" -> false, "-e" -> false, "-f" -> false), args.toList)
 
+  // Proceed expressions from arguments
   if (options("-e") && expressionsList.nonEmpty) {
     if (options("-v")) println("Proceed expressions")
     expressionsList.foreach { s =>
@@ -30,14 +34,34 @@ object calc extends App {
     }
   }
 
+  // Proceed file specified in arguments
   if (options("-f")) {
     if (options("-v")) println(s"Proceed file $expressionsFile")
-    //noinspection SourceNotClosed
-    Source.fromFile(expressionsFile).getLines.foreach{ s =>
-      if (options("-v")) println(s)
-      lexer(s).foreach(t => println(t.tt, t.value))
+    try {
+      //noinspection SourceNotClosed
+      Source.fromFile(expressionsFile).getLines.foreach { s =>
+        if (options("-v")) println(s)
+        lexer(s).foreach(t => println(t.tt, t.value))
+      }
+    } catch {
+      case e: FileNotFoundException => println(e.getLocalizedMessage)
     }
   }
 
+  // Proceed in interactive mode
+  if (options("-i") || (!options("-e") && !options("-f"))) {
+    if (options("-v")) println("Proceed from input")
+    while (true) {
+      val input: String = StdIn.readLine
+      if (input != null) {
+        println(input)
+        val tokens: List[Token] = lexer(input)
+        tokens.foreach(t => println(t.tt, t.value))
+        if (tokens.contains(Token(TokenType.Command, "quit")) ||
+          tokens.contains(Token(TokenType.Command, "exit"))) sys.exit(0)
+      } else
+        sys.exit(-1)
+    }
+  }
   sys.exit(0)
 }
