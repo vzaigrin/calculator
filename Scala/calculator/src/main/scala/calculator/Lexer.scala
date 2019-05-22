@@ -73,7 +73,6 @@ class Lexer {
     var buffer: Array[Char] = Array() // buffer for "long" token
     var result: List[Token] = List() // list with parsed tokens
     val endToken: Token = Token(TokenType.End, "") // Token for end of line or input
-    def unknownToken(s: String): Token = Token(TokenType.Unknown, s) // Token for unknown input
 
     // Proceed chars from the input string one by one
     input.toArray.foreach { c =>
@@ -84,7 +83,9 @@ class Lexer {
           case SymbolType.SimpleToken => result :+= simple(c)
           case SymbolType.ComplexToken => state = State.Proceed
             buffer = Array(c)
-          case SymbolType.Unknown => result :+= unknownToken(c.toString)
+          case SymbolType.Unknown =>
+            println(s"Error: unknown token: ${c.toString}")
+            sys.exit(-1)
         }
         case State.Proceed => checkChar(c) match {
           case SymbolType.Space => state = State.Ready
@@ -100,10 +101,9 @@ class Lexer {
             buffer = Array()
             result ++= List(checkToken(s), simple(c))
           case SymbolType.ComplexToken => buffer :+= c
-          case SymbolType.Unknown => state = State.Ready
-            val s = buffer.mkString("")
-            buffer = Array()
-            result ++= List(checkToken(s), unknownToken(c.toString))
+          case SymbolType.Unknown =>
+            println(s"Error: unknown token: ${c.toString}")
+            sys.exit(-1)
         }
       }
     }
