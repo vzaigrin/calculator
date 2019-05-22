@@ -51,7 +51,8 @@ class Lexer {
   private def checkToken(s: String): Token = {
     // Identifiers and Numbers
     val identifier: Regex = "[_a-zA-Z][_a-zA-Z0-9]*".r
-    val number: Regex = """\d+|\d+\.\d*|\.\d+""".r
+    val number: Regex = """\d+""".r
+    val numberDot: Regex = """\d+|\d+\.\d*|\.\d+""".r
 
     s match {
       case identifier(_*) =>
@@ -59,7 +60,8 @@ class Lexer {
         else if (functions.contains(s)) Token(TokenType.Function, s)
         else if (commands.contains(s)) Token(TokenType.Command, s)
         else Token(TokenType.Identifier, s)
-      case number(_*) => Token(TokenType.Number, s.toDouble)
+      case number(_*) => Token(TokenType.Number, s.toInt)
+      case numberDot(_*) => Token(TokenType.Number, s.toDouble)
       case _ => Token(TokenType.Unknown, s)
     }
   }
