@@ -1,12 +1,13 @@
 This is umbrella project for command-line calculator.  
-I will use it for studying different computer languages.
+I use it for studying different computer languages.
 
-Calculator should read input (and execute expressions) in the interactive mode or from the file.
+Calculator should read input (and execute expressions) in the interactive mode, from command-line arguments or from the file.
 
 **Command line arguments**:
 - -i - interactive mode (default) - read and execute expressions until EOF or command 'quit' or 'exit'
-- -e expression - execute expression and exit
+- -e expression - execute expression and exit or proceed to interactive mode if *-i* option is provided
 - -f file - read and execute expressions from the file and exit or proceed to interactive mode if *-i* option is provided
+- -v - *verbose* mode - output more information
 
 ## Input Specification
 
@@ -61,6 +62,6 @@ To achieve its goals, Calculator should provide the following steps:
 
 ## Lexical Analyzer
 
-For lexical analysis I will use **Finite-state machine** with two states:
-- ready - ready for a new token, no symbols in cache
-- process - in the process of identifying token (has symbols in cache)
+For lexical analysis I use **Finite-state machine** with two states:
+- ready - ready for a new token, no symbols in buffer
+- process - in the process of identifying token (has symbols in buffer)
