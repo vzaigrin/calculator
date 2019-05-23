@@ -66,17 +66,11 @@ class Lexer {
       state match {
         case State.Ready => checkChar(c) match {
           case Symbol.Space =>
-          case Symbol.End => result :+= End()
+          case Symbol.End => if (result.last != Continue()) result :+= End()
           case Symbol.Operator => result :+= operators.filter(_.symbol == c).head
           case Symbol.Symbol =>
-            if (c == comment) {
-              result :+= End()
-              state = State.Skip
-            }
-            else if (c == continue) {
-              result :+= Continue()
-              state = State.Skip
-            }
+            if (c == comment) state = State.Skip
+            else if (c == continue) result :+= Continue()
             else result :+= symbols.filter(_.symbol == c).head
           case Symbol.Complex => state = State.Proceed
             buffer = Array(c)
@@ -99,21 +93,15 @@ class Lexer {
             val token = checkToken(buffer)
             buffer = Array()
             if (token != Unknown()) result :+= token
-            if (c == comment) {
-              result :+= End()
-              state = State.Skip
-            }
-            else if (c == continue) {
-              result :+= Continue()
-              state = State.Skip
-            }
+            if (c == comment) state = State.Skip
+            else if (c == continue) result :+= Continue()
             else result :+= symbols.filter(_.symbol == c).head
           case Symbol.Complex => buffer :+= c
           case Symbol.Unknown => println(s"Warning: unknown token: $c")
         }
         case State.Skip => checkChar(c) match {
           case Symbol.End => state = State.Ready
-            result :+= End()
+            if (result.last != Continue()) result :+= End()
             buffer = Array()
           case _ =>
         }

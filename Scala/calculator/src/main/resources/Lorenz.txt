@@ -1,4 +1,4 @@
 # Lorenz system
-x' = s * (y - x)
+x' = s * (y - x) # s - sigma
 y' = x * (r - z) - y
 z' = x*y - b*z
