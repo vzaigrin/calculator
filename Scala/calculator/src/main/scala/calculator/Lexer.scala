@@ -111,7 +111,12 @@ class Lexer {
           case Symbol.Complex => buffer :+= c
           case Symbol.Unknown => println(s"Warning: unknown token: $c")
         }
-        case State.Skip =>
+        case State.Skip => checkChar(c) match {
+          case Symbol.End => state = State.Ready
+            result :+= End()
+            buffer = Array()
+          case _ =>
+        }
       }
     }
 

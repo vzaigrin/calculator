@@ -1,3 +1,4 @@
+# Lorenz system
 x' = s * (y - x)
 y' = x * (r - z) - y
-z' = x * y - b * z
+z' = x*y - b*z
