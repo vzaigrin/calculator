@@ -29,7 +29,7 @@ Calculator should read input (and execute expressions) in the interactive mode, 
 - ) - right parenthesis
 - ; - semi-colon
 - \ - continue tokens on the next line
-- # - start comment until end of line
+- \# - start comment until end of line
 
 **Identifier**: [_a-zA-Z][_a-zA-Z0-9]\*
 
