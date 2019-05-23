@@ -28,6 +28,8 @@ Calculator should read input (and execute expressions) in the interactive mode, 
 - ( - left parenthesis
 - ) - right parenthesis
 - ; - semi-colon
+- \ - continue tokens on the next line
+- # - start comment until end of line
 
 **Identifier**: [_a-zA-Z][_a-zA-Z0-9]\*
 
@@ -62,6 +64,7 @@ To achieve its goals, Calculator should provide the following steps:
 
 ## Lexical Analyzer
 
-For lexical analysis I use **Finite-state machine** with two states:
+For lexical analysis I use **Finite-state machine** with states:
 - ready - ready for a new token, no symbols in buffer
 - process - in the process of identifying token (has symbols in buffer)
+- skip - skip all symbols starting from comment symbol until end of line
