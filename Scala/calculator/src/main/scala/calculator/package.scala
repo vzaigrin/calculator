@@ -16,7 +16,7 @@ package object calculator {
   val symbols: List[Symbol] = List(
     Symbol('(', "left_parenthesis"),
     Symbol(')', "right_parenthesis"),
-    Symbol(';', "semi-colon"),
+    Symbol(';', "separate"),
     Symbol('\\', "continue"),
     Symbol('#', "comment")
   )
