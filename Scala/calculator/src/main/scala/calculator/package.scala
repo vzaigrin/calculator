@@ -28,18 +28,18 @@ package object calculator {
   val symbolsMap: Map[Char, Symbol] = symbols.map(c => c.symbol -> c).toMap
 
   val functions: List[Function] = List(
-    Function("exp", (x: Double) => math.exp(x)),
-    Function("log", (x: Double) => math.log(x)),
-    Function("log10", (x: Double) => math.log10(x)),
-    Function("acos", (x: Double) => math.acos(x)),
-    Function("asin", (x: Double) => math.asin(x)),
-    Function("atan", (x: Double) => math.atan(x)),
-    Function("cos", (x: Double) => math.cos(x)),
-    Function("sin", (x: Double) => math.sin(x)),
-    Function("tan", (x: Double) => math.tan(x)),
-    Function("cosh", (x: Double) => math.cosh(x)),
-    Function("sinh", (x: Double) => math.sinh(x)),
-    Function("tanh", (x: Double) => math.tanh(x))
+    Function("exp", math.exp),
+    Function("log", math.log),
+    Function("log10", math.log10),
+    Function("acos", math.acos),
+    Function("asin", math.asin),
+    Function("atan", math.atan),
+    Function("cos", math.cos),
+    Function("sin", math.sin),
+    Function("tan", math.tan),
+    Function("cosh", math.cosh),
+    Function("sinh", math.sinh),
+    Function("tanh", math.tanh)
   )
   val functionsMap: Map[String, Function] = functions.map(c => c.name -> c).toMap
 
