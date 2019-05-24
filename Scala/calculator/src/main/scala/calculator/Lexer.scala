@@ -19,14 +19,12 @@ class Lexer {
     // Chars for separate tokens, one-symbol tokens and symbol for start, continue and stop token
     val space: Array[Char] = Array (' ', '\t')
     val end: Array[Char] = Array ('\n', '\r')
-    val operator: List[Char] = operators.map(_.symbol)
-    val symbol: List[Char] = symbols.map(_.symbol)
     val complex: List[Char] = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')).toList ++ List('_', '.')
 
     if (space.contains(c)) Symbol.Space
     else if (end.contains(c)) Symbol.End
-    else if (operator.contains(c)) Symbol.Operator
-    else if (symbol.contains(c)) Symbol.Symbol
+    else if (operatorsMap.keySet.contains(c)) Symbol.Operator
+    else if (symbolsMap.keySet.contains(c)) Symbol.Symbol
     else if (complex.contains(c)) Symbol.Complex
     else Symbol.Unknown
   }
@@ -40,8 +38,8 @@ class Lexer {
 
     s match {
       case identifier(_*) =>
-        if (constants.map(_.name).contains(s)) constants.find(_.name == s).get
-        else if (functions.map(_.name).contains(s)) functions.find(_.name == s).get
+        if (constantsMap.keySet.contains(s)) constantsMap(s)
+        else if (functionsMap.keySet.contains(s)) functionsMap(s)
         else if (commands.map(_.name).contains(s)) commands.find(_.name == s).get
         else Identifier(s)
       case number(_*) => Number(s.toDouble)
@@ -74,11 +72,11 @@ class Lexer {
         case State.Ready => checkChar(c) match {
           case Symbol.Space =>
           case Symbol.End => if (result.last != Continue()) result :+= End()
-          case Symbol.Operator => result :+= operators.find(_.symbol == c).get
+          case Symbol.Operator => result :+= operatorsMap(c)
           case Symbol.Symbol =>
             if (c == comment) state = State.Skip
             else if (c == continue) result :+= Continue()
-            else result :+= symbols.find(_.symbol == c).get
+            else result :+= symbolsMap(c)
           case Symbol.Complex => state = State.Proceed
             buffer = Array(c)
           case Symbol.Unknown => println(s"Warning: unknown token: $c")
@@ -95,14 +93,14 @@ class Lexer {
           case Symbol.Operator => state = State.Ready
             val token = checkToken(buffer)
             buffer = Array()
-            if (token != Unknown()) result ++= List(token, operators.find(_.symbol == c).get)
+            if (token != Unknown()) result ++= List(token, operatorsMap(c))
           case Symbol.Symbol => state = State.Ready
             val token = checkToken(buffer)
             buffer = Array()
             if (token != Unknown()) result :+= token
             if (c == comment) state = State.Skip
             else if (c == continue) result :+= Continue()
-            else result :+= symbols.find(_.symbol == c).get
+            else result :+= symbolsMap(c)
           case Symbol.Complex => buffer :+= c
           case Symbol.Unknown => println(s"Warning: unknown token: $c")
         }
@@ -118,8 +116,12 @@ class Lexer {
     // No more chars in the input
     // Check buffer and return final list of tokens
     state match {
-      case State.Skip => result
-      case State.Ready => result :+ End()
+      case State.Skip =>
+        if (result.nonEmpty) result :+ End()
+        else result
+      case State.Ready =>
+        if (result.nonEmpty) result :+ End()
+        else result
       case State.Proceed =>
         val token = checkToken(buffer)
         if (token != Unknown()) result ++ List(token, End())
