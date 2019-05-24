@@ -39,7 +39,6 @@ Calculator should read input (and execute expressions) in the interactive mode, 
 - exp - exponential
 - log - natural logarithm
 - log10 - base 10 logarithm 
-- pow - power
 - acos - arc cosine
 - asin - arc sine
 - atan - arc tangent
@@ -66,5 +65,5 @@ To achieve its goals, Calculator should provide the following steps:
 
 For lexical analysis I use **Finite-state machine** with states:
 - ready - ready for a new token, no symbols in buffer
-- process - in the process of identifying token (has symbols in buffer)
+- process - in the process of identifying 'long' token (has symbols in buffer)
 - skip - skip all symbols starting from comment symbol until end of line
