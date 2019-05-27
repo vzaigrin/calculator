@@ -38,16 +38,17 @@ object calc extends App {
   // Proceed file specified in arguments
   if (options("-f")) {
     if (options("-v")) println(s"Proceed file $expressionsFile")
+    val fileSource: BufferedSource = Source.fromFile(expressionsFile)
     try {
-      //noinspection SourceNotClosed
-      Source.fromFile(expressionsFile).getLines.foreach { s =>
+      fileSource.getLines.foreach { s =>
         if (options("-v")) println(s)
         val tokens: List[Token] = Lexer().parse(s)
         tokens.foreach(t => println(t.toString))
       }
     } catch {
       case e: FileNotFoundException => println(e.getLocalizedMessage)
-    }
+    } finally
+      fileSource.close()
   }
 
   // Proceed in interactive mode
