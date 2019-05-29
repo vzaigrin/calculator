@@ -1,7 +1,6 @@
-This is umbrella project for command-line calculator.  
-I use it for studying different computer languages.
+This is umbrella project for command-line calculator. I use it for studying different computer languages.
 
-Calculator should read input (and execute expressions) in the interactive mode, from command-line arguments or from the file.
+Calculator should read input (and execute expressions) in the interactive mode, from command-line arguments or from the file. It should work only with Double numbers.
 
 **Command line arguments**:
 - -i - interactive mode (default) - read and execute expressions until EOF or command 'quit' or 'exit'
@@ -53,6 +52,8 @@ Calculator should read input (and execute expressions) in the interactive mode, 
 - quit - stop and exit
 - exit - stop and exit
 
+*derivative* at this time should produce new identifier: *d_\**. I plan to use it for solving ODE.
+
 # Tasks
 
 To achieve its goals, Calculator should provide the following steps:
@@ -60,6 +61,7 @@ To achieve its goals, Calculator should provide the following steps:
 - Syntax analysis - transform a list of tokens (from the Lexical analyzer) into a Syntax tree, based on a grammar
 - Code generation - translate the output of the Syntax analyzer into lower level code (stack machine)
 
+I will solve this tasks "from scratch" without using any special libraries or tools.
 
 ## Lexical Analyzer
 
