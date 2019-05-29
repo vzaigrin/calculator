@@ -1,4 +1,5 @@
-import calculator._
+package calculator
+
 import org.scalatest.FunSuite
 
 class LexerTest extends FunSuite {
