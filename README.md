@@ -26,7 +26,7 @@ Calculator should read input (and execute expressions) in the interactive mode, 
 **Symbols**
 - ( - left parenthesis
 - ) - right parenthesis
-- ; - semi-colon
+- ; - semi-colon - to separate statements
 - \ - continue tokens on the next line
 - \# - start comment until end of line
 
