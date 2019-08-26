@@ -1,0 +1,8 @@
+.git
+Scala/calculator/.idea
+Scala/calculator/project/target
+Scala/calculator/target/scala-2.12/classes
+Scala/calculator/target/scala-2.12/resolution-cache
+Scala/calculator/target/scala-2.12/test-classes
+Scala/calculator/target/streams
+Scala/calculator/target/test-reports
